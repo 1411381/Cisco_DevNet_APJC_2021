@@ -1,0 +1,12 @@
+{
+    "name": "Cisco_Hackathon_2021",
+    "description": "Cisco Hackathon 2021 APJC",
+    "version": "0.0.1",
+    "dependencies": {},
+    "node-red": {
+        "settings": {
+            "flowFile": "flow.json",
+            "credentialsFile": "flow_cred.json"
+        }
+    }
+}
