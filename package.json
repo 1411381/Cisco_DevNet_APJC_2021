@@ -2,7 +2,10 @@
     "name": "Cisco_Hackathon_2021",
     "description": "Cisco Hackathon 2021 APJC",
     "version": "0.0.1",
-    "dependencies": {},
+    "dependencies": {
+        "node-red-contrib-aedes": "0.5.2",
+        "node-red-contrib-image-tools": "1.4.0"
+    },
     "node-red": {
         "settings": {
             "flowFile": "flow.json",
