@@ -1,1 +1,1894 @@
-[]
+[
+    {
+        "id": "d39c74cf.5dda38",
+        "type": "tab",
+        "label": "Cisco DevNet Flow1",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "b82038ad.1efd3",
+        "type": "tab",
+        "label": "Cisco DevNet Flow2",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "1ac45e70.7fe4aa",
+        "type": "subflow",
+        "name": "Subflow 2",
+        "info": "",
+        "in": [
+            {
+                "x": 80,
+                "y": 100,
+                "wires": [
+                    {
+                        "id": "61f44ff0.006a18"
+                    }
+                ]
+            }
+        ],
+        "out": [
+            {
+                "x": 1220,
+                "y": 80,
+                "wires": [
+                    {
+                        "id": "465ad703.04e42",
+                        "port": 0
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "80fc4f62.511cd",
+        "type": "mqtt-broker",
+        "name": "",
+        "broker": "wss-score-calculator.japaneast.cloudapp.azure.com",
+        "port": "1883",
+        "clientid": "",
+        "usetls": false,
+        "compatmode": false,
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": ""
+    },
+    {
+        "id": "61f44ff0.006a18",
+        "type": "function",
+        "z": "1ac45e70.7fe4aa",
+        "name": "",
+        "func": "msg.xErrorCount +=1;\n\nlet code = msg.payload.code;\n\nmsg.url =\"https://webexapis.com/v1/access_token\";\nmsg.headers = {\n    \"Content-Type\" : \"application/x-www-form-urlencoded\"\n}\nmsg.method =\"post\"\nmsg.payload = {\n    \"grant_type\" : \"refresh_token\",\n    \"client_id\" : global.get(\"client_id\"),\n    \"client_secret\" : global.get(\"client_secret\"),\n    \"refresh_token\" : global.get(\"refresh_token\")\n}\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 200,
+        "y": 120,
+        "wires": [
+            [
+                "2626577a.7d8d7",
+                "16b39ef3.87f189"
+            ]
+        ]
+    },
+    {
+        "id": "e21f91c1.c934a8",
+        "type": "http request",
+        "z": "1ac45e70.7fe4aa",
+        "name": "",
+        "method": "use",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "x": 590,
+        "y": 120,
+        "wires": [
+            [
+                "24c37a03.b87c56"
+            ]
+        ]
+    },
+    {
+        "id": "24bbd683.e2bd4a",
+        "type": "change",
+        "z": "1ac45e70.7fe4aa",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "access_token",
+                "pt": "global",
+                "to": "payload.access_token",
+                "tot": "msg"
+            },
+            {
+                "t": "set",
+                "p": "refresh_token",
+                "pt": "global",
+                "to": "payload.refresh_token",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 920,
+        "y": 80,
+        "wires": [
+            [
+                "465ad703.04e42"
+            ]
+        ]
+    },
+    {
+        "id": "24c37a03.b87c56",
+        "type": "switch",
+        "z": "1ac45e70.7fe4aa",
+        "name": "",
+        "property": "statusCode",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "200",
+                "vt": "num"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 750,
+        "y": 120,
+        "wires": [
+            [
+                "24bbd683.e2bd4a",
+                "f180591f.b6a098"
+            ],
+            [
+                "3c5046f0.c58e12"
+            ]
+        ]
+    },
+    {
+        "id": "2626577a.7d8d7",
+        "type": "switch",
+        "z": "1ac45e70.7fe4aa",
+        "name": "",
+        "property": "xErrorCount",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "lt",
+                "v": "2",
+                "vt": "num"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 390,
+        "y": 120,
+        "wires": [
+            [
+                "e21f91c1.c934a8"
+            ],
+            [
+                "92a7c6e.dd398b8"
+            ]
+        ]
+    },
+    {
+        "id": "16b39ef3.87f189",
+        "type": "function",
+        "z": "1ac45e70.7fe4aa",
+        "name": "",
+        "func": "node.warn( msg )",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 365,
+        "y": 277,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "92a7c6e.dd398b8",
+        "type": "function",
+        "z": "1ac45e70.7fe4aa",
+        "name": "",
+        "func": "node.warn( msg )",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 620,
+        "y": 300,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "3c5046f0.c58e12",
+        "type": "function",
+        "z": "1ac45e70.7fe4aa",
+        "name": "",
+        "func": "node.warn( msg )",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 1060,
+        "y": 280,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "f180591f.b6a098",
+        "type": "function",
+        "z": "1ac45e70.7fe4aa",
+        "name": "",
+        "func": "node.warn( msg )",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 933,
+        "y": 361,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "465ad703.04e42",
+        "type": "function",
+        "z": "1ac45e70.7fe4aa",
+        "name": "",
+        "func": "msg.xAccess_token = msg.payload.access_token\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 1100,
+        "y": 80,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "f22f82dd.52d26",
+        "type": "http in",
+        "z": "d39c74cf.5dda38",
+        "name": "",
+        "url": "/webex/redirect_uri",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 200,
+        "y": 280,
+        "wires": [
+            [
+                "4548fc8b.635b84"
+            ]
+        ]
+    },
+    {
+        "id": "431e12b.bf896ec",
+        "type": "function",
+        "z": "d39c74cf.5dda38",
+        "name": "",
+        "func": "\nlet code = msg.payload.code;\n\nmsg.url =\"https://webexapis.com/v1/access_token\";\nmsg.headers = {\n    \"Content-Type\" : \"application/x-www-form-urlencoded\"\n}\nmsg.method =\"post\"\nmsg.payload = {\n    \"grant_type\" : \"authorization_code\",\n    \"client_id\" : global.get(\"client_id\"),\n    \"client_secret\" : global.get(\"client_secret\"),\n    \"code\" : `${code}`,\n    \"redirect_uri\" : \"YOUR_Redirect_Uri\"\n}\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 550,
+        "y": 280,
+        "wires": [
+            [
+                "f86f7b0c.5e8e3"
+            ]
+        ]
+    },
+    {
+        "id": "f86f7b0c.5e8e3",
+        "type": "http request",
+        "z": "d39c74cf.5dda38",
+        "name": "-> Webex",
+        "method": "use",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "x": 690,
+        "y": 280,
+        "wires": [
+            [
+                "495beb5e.8a049c"
+            ]
+        ]
+    },
+    {
+        "id": "3a2c0a0.0c963f6",
+        "type": "inject",
+        "z": "d39c74cf.5dda38",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 210,
+        "y": 100,
+        "wires": [
+            [
+                "120ea2c8.d89c5d"
+            ]
+        ]
+    },
+    {
+        "id": "120ea2c8.d89c5d",
+        "type": "function",
+        "z": "d39c74cf.5dda38",
+        "name": "",
+        "func": "msg.client_id = \"YOUR_Client_ID\";\n\nmsg.client_secret = \"YOUR_Client_Secret\"\n\nmsg.integration_id = \"YOUR_Integration_ID\";\n\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 380,
+        "y": 100,
+        "wires": [
+            [
+                "a933a347.d484c8"
+            ]
+        ]
+    },
+    {
+        "id": "a933a347.d484c8",
+        "type": "change",
+        "z": "d39c74cf.5dda38",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "client_id",
+                "pt": "global",
+                "to": "client_id",
+                "tot": "msg"
+            },
+            {
+                "t": "set",
+                "p": "client_secret",
+                "pt": "global",
+                "to": "client_secret",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 590,
+        "y": 100,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "a1a6bc04.d32ad8",
+        "type": "inject",
+        "z": "d39c74cf.5dda38",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 200,
+        "y": 200,
+        "wires": [
+            [
+                "bd7bd2ce.9d0728"
+            ]
+        ]
+    },
+    {
+        "id": "bd7bd2ce.9d0728",
+        "type": "function",
+        "z": "d39c74cf.5dda38",
+        "name": "Global Variables Check",
+        "func": "msg.ci = global.get(\"client_id\");\nmsg.cs = global.get(\"client_secret\")\nmsg.at = global.get(\"access_token\")\nnode.warn(msg)",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 420,
+        "y": 200,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "495beb5e.8a049c",
+        "type": "switch",
+        "z": "d39c74cf.5dda38",
+        "name": "",
+        "property": "statusCode",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "200",
+                "vt": "num"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 920,
+        "y": 280,
+        "wires": [
+            [
+                "9875cc0e.3dcda"
+            ],
+            [
+                "23bb41a3.c04fee"
+            ]
+        ]
+    },
+    {
+        "id": "9875cc0e.3dcda",
+        "type": "change",
+        "z": "d39c74cf.5dda38",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "access_token",
+                "pt": "global",
+                "to": "payload.access_token",
+                "tot": "msg"
+            },
+            {
+                "t": "set",
+                "p": "refresh_token",
+                "pt": "global",
+                "to": "payload.refresh_token",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1170,
+        "y": 260,
+        "wires": [
+            [
+                "6c0ac2a8.e88bbc"
+            ]
+        ]
+    },
+    {
+        "id": "46296f62.a0c018",
+        "type": "http response",
+        "z": "d39c74cf.5dda38",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 1470,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "6c0ac2a8.e88bbc",
+        "type": "function",
+        "z": "d39c74cf.5dda38",
+        "name": "",
+        "func": "msg.payload = {\n    \"result\" : \"ok\"\n}\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1330,
+        "y": 260,
+        "wires": [
+            [
+                "46296f62.a0c018"
+            ]
+        ]
+    },
+    {
+        "id": "4548fc8b.635b84",
+        "type": "function",
+        "z": "d39c74cf.5dda38",
+        "name": "init",
+        "func": "msg.xErrorCount = 0;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 380,
+        "y": 280,
+        "wires": [
+            [
+                "431e12b.bf896ec"
+            ]
+        ]
+    },
+    {
+        "id": "23bb41a3.c04fee",
+        "type": "http response",
+        "z": "d39c74cf.5dda38",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 1100,
+        "y": 320,
+        "wires": []
+    },
+    {
+        "id": "6f6366f7.94854",
+        "type": "function",
+        "z": "d39c74cf.5dda38",
+        "name": "init",
+        "func": "\nmsg.xErrorCount = 0;\nmsg.xId = msg.payload.data.id;\nmsg.xAccess_token = `YOUR_ACCESS_TOKEN`;\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 330,
+        "y": 660,
+        "wires": [
+            [
+                "626c6e72.424728"
+            ]
+        ]
+    },
+    {
+        "id": "da3c444e.a2285",
+        "type": "http request",
+        "z": "d39c74cf.5dda38",
+        "name": "-> Webex",
+        "method": "use",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "x": 720,
+        "y": 660,
+        "wires": [
+            [
+                "e59bcf2d.0502e"
+            ]
+        ]
+    },
+    {
+        "id": "626c6e72.424728",
+        "type": "function",
+        "z": "d39c74cf.5dda38",
+        "name": "msg読取",
+        "func": "msg.url =`https://webexapis.com/v1/messages/${msg.xId}`;\nmsg.method =\"get\";\nmsg.headers = {\n    \"Authorization\" : `Bearer ${msg.xAccess_token}`,\n    \"Content-Type\" : \"application/json\"\n}\n\nmsg.payload = {}\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 500,
+        "y": 660,
+        "wires": [
+            [
+                "da3c444e.a2285"
+            ]
+        ]
+    },
+    {
+        "id": "e59bcf2d.0502e",
+        "type": "switch",
+        "z": "d39c74cf.5dda38",
+        "name": "?200",
+        "property": "statusCode",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "200",
+                "vt": "num"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 870,
+        "y": 660,
+        "wires": [
+            [
+                "63d9487.c09c338"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "f934a5f4.dd9508",
+        "type": "function",
+        "z": "d39c74cf.5dda38",
+        "name": "msg返信",
+        "func": "\nlet text = msg.payload.text;\n\nmsg.url =\"https://webexapis.com/v1/messages\";\nmsg.headers = {\n    \"Authorization\" : `Bearer ${msg.xAccess_token}`,\n    \"Content-Type\" : \"application/json\"\n}\nmsg.method =\"post\";\nmsg.payload = {\n                \"roomId\": `${msg.roomId}`,\n                \"markdown\":\"a\",  \n                \"attachments\": {\n                  \"contentType\": \"application/vnd.microsoft.card.adaptive\",\n                  \"content\": {\n                \"type\": \"AdaptiveCard\",\n                \"body\": [\n                    {\n                        \"type\": \"TextBlock\",\n                        \"text\": \"興味のあるスポーツを選択してください。\",\n                        \"wrap\": true\n                    },\n                    {\n                        \"type\": \"Input.ChoiceSet\",\n                        \"choices\": msg.choices,\n                        \"placeholder\": \"Placeholder text\",\n                        \"isMultiSelect\": true,\n                        \"id\": \"selected\"\n                    },\n                    {\n                        \"type\": \"ActionSet\",\n                        \"actions\": [\n                            {\n                                \"type\": \"Action.Submit\",\n                                \"title\": \"Request Submit\",\n                                \"data\": {\n                                    \"subscribe\": true\n                                }\n                            }\n                        ],\n                        \"spacing\": \"None\"\n                    }\n                ],\n                \"$schema\": \"http://adaptivecards.io/schemas/adaptive-card.json\",\n                \"version\": \"1.2\"\n            }\n                }\n              }\n        return msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1700,
+        "y": 640,
+        "wires": [
+            [
+                "b66149a9.a62dd8",
+                "1b018951.764397"
+            ]
+        ]
+    },
+    {
+        "id": "35f4b1a0.51e3de",
+        "type": "debug",
+        "z": "d39c74cf.5dda38",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1130,
+        "y": 560,
+        "wires": []
+    },
+    {
+        "id": "b66149a9.a62dd8",
+        "type": "http request",
+        "z": "d39c74cf.5dda38",
+        "name": "-> Webex",
+        "method": "use",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "x": 1880,
+        "y": 640,
+        "wires": [
+            [
+                "fd7bcdb9.751e7"
+            ]
+        ]
+    },
+    {
+        "id": "fd7bcdb9.751e7",
+        "type": "debug",
+        "z": "d39c74cf.5dda38",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 2030,
+        "y": 640,
+        "wires": []
+    },
+    {
+        "id": "ef67846b.fc8528",
+        "type": "http in",
+        "z": "d39c74cf.5dda38",
+        "name": "",
+        "url": "/webex/webhooks",
+        "method": "post",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 130,
+        "y": 660,
+        "wires": [
+            [
+                "6f6366f7.94854",
+                "1c9082db.13e61d"
+            ]
+        ]
+    },
+    {
+        "id": "63d9487.c09c338",
+        "type": "switch",
+        "z": "d39c74cf.5dda38",
+        "name": "",
+        "property": "payload.personId",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "neq",
+                "v": "Y2lzY29zcGFyazovL3VzL1BFT1BMRS81YTE2MTg4Ny1hMmRmLTRmYmQtYWUyMS1jZjVmNjNjMmQ0ZGM",
+                "vt": "str"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 1010,
+        "y": 640,
+        "wires": [
+            [
+                "35f4b1a0.51e3de",
+                "1e7fe204.b2e7ee"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "11d724e6.d59463",
+        "type": "http in",
+        "z": "d39c74cf.5dda38",
+        "name": "",
+        "url": "/webex/submit",
+        "method": "post",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 180,
+        "y": 880,
+        "wires": [
+            [
+                "44cd502a.590e78"
+            ]
+        ]
+    },
+    {
+        "id": "44cd502a.590e78",
+        "type": "function",
+        "z": "d39c74cf.5dda38",
+        "name": "res読取",
+        "func": "msg.xAccess_token = `YOUR_ACCESS_TOKEN`;\n\nmsg.url =`https://webexapis.com/v1/attachment/actions/${msg.payload.data.id}`;\nmsg.headers = {\n    \"Authorization\" : `Bearer ${msg.xAccess_token}`,\n}\nmsg.method =\"get\";\nmsg.xData = msg.payload;\n\nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 400,
+        "y": 880,
+        "wires": [
+            [
+                "7d783edb.5773d8",
+                "bdc0fcb.029038"
+            ]
+        ]
+    },
+    {
+        "id": "7d783edb.5773d8",
+        "type": "http request",
+        "z": "d39c74cf.5dda38",
+        "name": "-> Webex",
+        "method": "use",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "x": 580,
+        "y": 880,
+        "wires": [
+            [
+                "19fa9496.6ec42b",
+                "300838c1.fe49c8"
+            ]
+        ]
+    },
+    {
+        "id": "bdc0fcb.029038",
+        "type": "debug",
+        "z": "d39c74cf.5dda38",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 590,
+        "y": 980,
+        "wires": []
+    },
+    {
+        "id": "19fa9496.6ec42b",
+        "type": "function",
+        "z": "d39c74cf.5dda38",
+        "name": "",
+        "func": "let data = msg.payload.inputs.selected;\n\nmsg.selected = data.split(\",\");\nmsg.xCounter = 0;\nmsg.xSize = msg.selected.length;\nmsg.personId = msg.payload.personId;\n\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 840,
+        "y": 880,
+        "wires": [
+            [
+                "c02547d9.8cce9"
+            ]
+        ]
+    },
+    {
+        "id": "1e7fe204.b2e7ee",
+        "type": "function",
+        "z": "d39c74cf.5dda38",
+        "name": "init",
+        "func": "\nmsg.roomId = msg.payload.roomId\nmsg.url =`https://webexapis.com/v1/rooms`;\nmsg.headers = {\n    \"Authorization\" : `Bearer ${msg.xAccess_token}`,\n    \"Content-Type\" : \"application/json\"\n}\n\nmsg.method =\"get\";\ndelete msg.payload;\nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1170,
+        "y": 640,
+        "wires": [
+            [
+                "86f87ea5.6f9628"
+            ]
+        ]
+    },
+    {
+        "id": "86f87ea5.6f9628",
+        "type": "http request",
+        "z": "d39c74cf.5dda38",
+        "name": "-> Webex",
+        "method": "use",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "x": 1320,
+        "y": 640,
+        "wires": [
+            [
+                "68846ffb.e38878"
+            ]
+        ]
+    },
+    {
+        "id": "68846ffb.e38878",
+        "type": "function",
+        "z": "d39c74cf.5dda38",
+        "name": "",
+        "func": "let choices = [];\n\nlet filter_data = msg.payload.items.filter(x=>{\n    return x.type == \"group\"\n})\nfilter_data.forEach( x =>{\n    let data = {\n        \"title\" : x.title,\n        \"value\" : x.id\n    }\n    choices.push(data);\n})\n\nmsg.choices = choices;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1320,
+        "y": 700,
+        "wires": [
+            [
+                "d1e3847d.bedc38"
+            ]
+        ]
+    },
+    {
+        "id": "d1e3847d.bedc38",
+        "type": "switch",
+        "z": "d39c74cf.5dda38",
+        "name": "",
+        "property": "statusCode",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "200",
+                "vt": "num"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 1470,
+        "y": 700,
+        "wires": [
+            [
+                "f934a5f4.dd9508"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "1b018951.764397",
+        "type": "debug",
+        "z": "d39c74cf.5dda38",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1930,
+        "y": 560,
+        "wires": []
+    },
+    {
+        "id": "300838c1.fe49c8",
+        "type": "debug",
+        "z": "d39c74cf.5dda38",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 810,
+        "y": 940,
+        "wires": []
+    },
+    {
+        "id": "c24542e0.daf23",
+        "type": "function",
+        "z": "d39c74cf.5dda38",
+        "name": " room add",
+        "func": "\n\nmsg.url =`https://webexapis.com/v1/memberships`;\nmsg.headers = {\n    \"Authorization\" : `Bearer ${msg.xAccess_token}`,\n    \"Content-Type\" : \"application/json\"\n}\n\nmsg.method =\"post\";\nmsg.xData = msg.payload;\nmsg.payload = {\n    \"roomId\" : `${ msg.selected[msg.xCounter]}`,\n    \"personEmail\" : `${msg.personId}`\n}\nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1220,
+        "y": 860,
+        "wires": [
+            [
+                "ad543075.17434"
+            ]
+        ]
+    },
+    {
+        "id": "c02547d9.8cce9",
+        "type": "switch",
+        "z": "d39c74cf.5dda38",
+        "name": "",
+        "property": "xCounter",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "lt",
+                "v": "xSize",
+                "vt": "msg"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 1050,
+        "y": 880,
+        "wires": [
+            [
+                "c24542e0.daf23"
+            ],
+            [
+                "69cc0fbf.086d58"
+            ]
+        ]
+    },
+    {
+        "id": "2ebd208.38ff5e",
+        "type": "function",
+        "z": "d39c74cf.5dda38",
+        "name": "",
+        "func": "msg.xCounter +=1;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1540,
+        "y": 800,
+        "wires": [
+            [
+                "c02547d9.8cce9"
+            ]
+        ]
+    },
+    {
+        "id": "69cc0fbf.086d58",
+        "type": "debug",
+        "z": "d39c74cf.5dda38",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1210,
+        "y": 920,
+        "wires": []
+    },
+    {
+        "id": "ad543075.17434",
+        "type": "http request",
+        "z": "d39c74cf.5dda38",
+        "name": "-> Webex",
+        "method": "use",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "x": 1380,
+        "y": 860,
+        "wires": [
+            [
+                "2ebd208.38ff5e"
+            ]
+        ]
+    },
+    {
+        "id": "5bf0dacd.142be4",
+        "type": "http in",
+        "z": "d39c74cf.5dda38",
+        "name": "",
+        "url": "/meraki/webhook",
+        "method": "post",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 180,
+        "y": 1200,
+        "wires": [
+            [
+                "5b9dcac7.170614",
+                "b810c459.dde698",
+                "740f5b56.3ec164"
+            ]
+        ]
+    },
+    {
+        "id": "b810c459.dde698",
+        "type": "debug",
+        "z": "d39c74cf.5dda38",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 520,
+        "y": 1200,
+        "wires": []
+    },
+    {
+        "id": "5b9dcac7.170614",
+        "type": "function",
+        "z": "d39c74cf.5dda38",
+        "name": "",
+        "func": "if(msg.payload.alertTypeId !== \"motion_alert\"){\n    node.warn( msg )\n}",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 450,
+        "y": 1260,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "740f5b56.3ec164",
+        "type": "http response",
+        "z": "d39c74cf.5dda38",
+        "name": "",
+        "statusCode": "204",
+        "headers": {},
+        "x": 430,
+        "y": 1160,
+        "wires": []
+    },
+    {
+        "id": "8ad5dd1a.7da99",
+        "type": "comment",
+        "z": "d39c74cf.5dda38",
+        "name": "Requied case of use integrations",
+        "info": "",
+        "x": 210,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "8ca66e8b.e0c96",
+        "type": "comment",
+        "z": "d39c74cf.5dda38",
+        "name": "bot flow",
+        "info": "",
+        "x": 90,
+        "y": 600,
+        "wires": []
+    },
+    {
+        "id": "360ffd07.2edcba",
+        "type": "http response",
+        "z": "d39c74cf.5dda38",
+        "name": "",
+        "statusCode": "204",
+        "headers": {},
+        "x": 500,
+        "y": 600,
+        "wires": []
+    },
+    {
+        "id": "1c9082db.13e61d",
+        "type": "function",
+        "z": "d39c74cf.5dda38",
+        "name": "init",
+        "func": "delete msg.payload;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 330,
+        "y": 600,
+        "wires": [
+            [
+                "360ffd07.2edcba"
+            ]
+        ]
+    },
+    {
+        "id": "6b3deb7b.d289c4",
+        "type": "comment",
+        "z": "d39c74cf.5dda38",
+        "name": "MV Webhook Test",
+        "info": "",
+        "x": 200,
+        "y": 1120,
+        "wires": []
+    },
+    {
+        "id": "cfce9f14.32d318",
+        "type": "aedes broker",
+        "z": "b82038ad.1efd3",
+        "name": "",
+        "mqtt_port": 1883,
+        "mqtt_ws_bind": "port",
+        "mqtt_ws_port": "",
+        "mqtt_ws_path": "",
+        "cert": "",
+        "key": "",
+        "certname": "",
+        "keyname": "",
+        "dburl": "",
+        "usetls": false,
+        "x": 330,
+        "y": 300,
+        "wires": [
+            [
+                "bdc83b80.f5cc28"
+            ]
+        ]
+    },
+    {
+        "id": "bdc83b80.f5cc28",
+        "type": "debug",
+        "z": "b82038ad.1efd3",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 580,
+        "y": 300,
+        "wires": []
+    },
+    {
+        "id": "cc38b8ca.28ce38",
+        "type": "mqtt in",
+        "z": "b82038ad.1efd3",
+        "name": "",
+        "topic": "/merakimv/+/raw_detections",
+        "qos": "2",
+        "datatype": "auto",
+        "broker": "80fc4f62.511cd",
+        "x": 340,
+        "y": 480,
+        "wires": [
+            [
+                "fd0e6e48.e1f438",
+                "950a0841.690a1"
+            ]
+        ]
+    },
+    {
+        "id": "c3b38a70.26881",
+        "type": "debug",
+        "z": "b82038ad.1efd3",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 3010,
+        "y": 320,
+        "wires": []
+    },
+    {
+        "id": "651cd72a.83745",
+        "type": "json",
+        "z": "b82038ad.1efd3",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 750,
+        "y": 480,
+        "wires": [
+            [
+                "a787d6ad.17b2a"
+            ]
+        ]
+    },
+    {
+        "id": "950a0841.690a1",
+        "type": "delay",
+        "z": "b82038ad.1efd3",
+        "name": "",
+        "pauseType": "rate",
+        "timeout": "5",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": true,
+        "x": 610,
+        "y": 480,
+        "wires": [
+            [
+                "651cd72a.83745"
+            ]
+        ]
+    },
+    {
+        "id": "33bfb49b.f342ac",
+        "type": "function",
+        "z": "b82038ad.1efd3",
+        "name": "",
+        "func": "\n//Meraki MV Serial Get\nvar reg = /\\/merakimv\\/(.+)\\/raw_detections/g;\nvar topic = msg.topic;\n\nvar serial_meraki = reg.exec(topic);\n//snapshot image url get\nmsg.url = `https://api.meraki.com/api/v1/devices/${ serial_meraki[1] }/camera/generateSnapshot`;\nmsg.headers = {\n    \"X-Cisco-Meraki-API-Key\" : \"YOUR_API_KEY\"\n}\nmsg.method = \"post\";\nmsg.payload = {\n    \"timestamp\" : `${msg.xNow}`\n}\n\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1780,
+        "y": 200,
+        "wires": [
+            [
+                "dcef0824.fd0758"
+            ]
+        ]
+    },
+    {
+        "id": "dcef0824.fd0758",
+        "type": "http request",
+        "z": "b82038ad.1efd3",
+        "name": "-> meraki",
+        "method": "use",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "x": 1920,
+        "y": 200,
+        "wires": [
+            [
+                "b0fffde7.03bd5"
+            ]
+        ]
+    },
+    {
+        "id": "976b52b8.6e7b3",
+        "type": "switch",
+        "z": "b82038ad.1efd3",
+        "name": "",
+        "property": "payload.objects.length",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "gt",
+                "v": "0",
+                "vt": "num"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 1550,
+        "y": 440,
+        "wires": [
+            [
+                "673f9c3.d70d764"
+            ],
+            [
+                "c5127e98.29df9"
+            ]
+        ]
+    },
+    {
+        "id": "db205218.9168e8",
+        "type": "inject",
+        "z": "b82038ad.1efd3",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 340,
+        "y": 680,
+        "wires": [
+            [
+                "cfda6540.8d9b48"
+            ]
+        ]
+    },
+    {
+        "id": "ec73b195.72a9f",
+        "type": "debug",
+        "z": "b82038ad.1efd3",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 970,
+        "y": 680,
+        "wires": []
+    },
+    {
+        "id": "cfda6540.8d9b48",
+        "type": "function",
+        "z": "b82038ad.1efd3",
+        "name": "",
+        "func": "msg.url = `https://webexapis.com/v1/messages`;\nmsg.headers = {\n    \"Authorization\" : `Beaere YOUR_ACCESS_TOKEN`\n}\nmsg.method = \"post\";\nmsg.payload = {\n    \"toPersonEmail\" : \"YOUR_BOT@webex.bot\",\n    \"text\" : \"phone\",\n    \"files\" : [\"https://spn6.meraki.com/stream/jpeg/snapshot/{ID}\"]\n};\n\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 580,
+        "y": 680,
+        "wires": [
+            [
+                "9a3b15a5.4251b8"
+            ]
+        ]
+    },
+    {
+        "id": "9a3b15a5.4251b8",
+        "type": "http request",
+        "z": "b82038ad.1efd3",
+        "name": "-> webex",
+        "method": "use",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "x": 760,
+        "y": 680,
+        "wires": [
+            [
+                "ec73b195.72a9f"
+            ]
+        ]
+    },
+    {
+        "id": "df95facc.221fc",
+        "type": "function",
+        "z": "b82038ad.1efd3",
+        "name": "msg url set",
+        "func": "\n\nmsg.url = `https://webexapis.com/v1/messages`;\nmsg.headers = {\n    \"Authorization\" : \"Bearer YOUR_ACCESS_TOKEN\"\n}\nmsg.method = \"post\";\nmsg.payload = {\n    \"roomId\" : \"ROOM_ID\",\n    \"text\" : \"Track&Field 100m Goal Line\",\n    \"files\" : [`${msg.xImage}`]\n};\n\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 2710,
+        "y": 320,
+        "wires": [
+            [
+                "67ab4b0a.d9a7e4"
+            ]
+        ]
+    },
+    {
+        "id": "67ab4b0a.d9a7e4",
+        "type": "http request",
+        "z": "b82038ad.1efd3",
+        "name": "-> webex",
+        "method": "use",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "x": 2860,
+        "y": 320,
+        "wires": [
+            [
+                "c3b38a70.26881"
+            ]
+        ]
+    },
+    {
+        "id": "54b52d8d.6e96ec",
+        "type": "debug",
+        "z": "b82038ad.1efd3",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1610,
+        "y": 600,
+        "wires": []
+    },
+    {
+        "id": "d1b82b70.fac54",
+        "type": "function",
+        "z": "b82038ad.1efd3",
+        "name": "status set",
+        "func": "\nflow.set(\"status\" , msg.xPayload.objects.length )\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1460,
+        "y": 600,
+        "wires": [
+            [
+                "54b52d8d.6e96ec"
+            ]
+        ]
+    },
+    {
+        "id": "52ea55eb.e2dc3c",
+        "type": "delay",
+        "z": "b82038ad.1efd3",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "5",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "x": 1080,
+        "y": 480,
+        "wires": [
+            [
+                "39b0decf.2cfaba"
+            ]
+        ]
+    },
+    {
+        "id": "57928124.2dd148",
+        "type": "function",
+        "z": "b82038ad.1efd3",
+        "name": "check",
+        "func": "//pervious status check\nif( flow.get(\"status\")< 1 ){\n    return [msg , null]\n}else{\n    return [ null , msg ]   \n}",
+        "outputs": 2,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1350,
+        "y": 480,
+        "wires": [
+            [
+                "976b52b8.6e7b3"
+            ],
+            [
+                "d1b82b70.fac54"
+            ]
+        ]
+    },
+    {
+        "id": "39b0decf.2cfaba",
+        "type": "function",
+        "z": "b82038ad.1efd3",
+        "name": "throught",
+        "func": "// initialize and close action only\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "// ここに記述したコードは、ノードをデプロイした時に\n// 一度だけ実行されます。\n\nflow.set(\"status\" , 0 )",
+        "finalize": "// ここに記述したコードは、ノードを停止したとき\n// もしくは再デプロイしたときに実行されます。\n\nflow.set(\"status\" , 0 )",
+        "libs": [],
+        "x": 1220,
+        "y": 480,
+        "wires": [
+            [
+                "57928124.2dd148"
+            ]
+        ]
+    },
+    {
+        "id": "b0fffde7.03bd5",
+        "type": "function",
+        "z": "b82038ad.1efd3",
+        "name": "url check",
+        "func": "msg.xImage = msg.payload.url;\n//image url chec\nmsg.url = `${msg.xImage}`\nmsg.method =\"get\";\nmsg.headers ={}\ndelete msg.payload;\n\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1820,
+        "y": 360,
+        "wires": [
+            [
+                "bd477e89.b9349"
+            ]
+        ]
+    },
+    {
+        "id": "7ddc9a31.03af24",
+        "type": "http request",
+        "z": "b82038ad.1efd3",
+        "name": "-> meraki",
+        "method": "use",
+        "ret": "bin",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "x": 2200,
+        "y": 360,
+        "wires": [
+            [
+                "da83e3ad.75865"
+            ]
+        ]
+    },
+    {
+        "id": "71f8a616.6965c8",
+        "type": "switch",
+        "z": "b82038ad.1efd3",
+        "name": "status check",
+        "property": "statusCode",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "200",
+                "vt": "num"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 2550,
+        "y": 360,
+        "wires": [
+            [
+                "df95facc.221fc"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "c5127e98.29df9",
+        "type": "debug",
+        "z": "b82038ad.1efd3",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1710,
+        "y": 480,
+        "wires": []
+    },
+    {
+        "id": "a787d6ad.17b2a",
+        "type": "function",
+        "z": "b82038ad.1efd3",
+        "name": "",
+        "func": "let now = new Date(msg.payload.ts);\nmsg.xNow = now.toISOString();\nmsg.xPayload = msg.payload;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 900,
+        "y": 480,
+        "wires": [
+            [
+                "52ea55eb.e2dc3c"
+            ]
+        ]
+    },
+    {
+        "id": "238b7f74.d8a088",
+        "type": "delay",
+        "z": "b82038ad.1efd3",
+        "name": "Gen Image Wait",
+        "pauseType": "delay",
+        "timeout": "120",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "x": 1540,
+        "y": 200,
+        "wires": [
+            [
+                "33bfb49b.f342ac"
+            ]
+        ]
+    },
+    {
+        "id": "673f9c3.d70d764",
+        "type": "function",
+        "z": "b82038ad.1efd3",
+        "name": "",
+        "func": "//status set\nflow.set(\"status\" , msg.xPayload.objects.length )\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1380,
+        "y": 200,
+        "wires": [
+            [
+                "238b7f74.d8a088"
+            ]
+        ]
+    },
+    {
+        "id": "bd477e89.b9349",
+        "type": "delay",
+        "z": "b82038ad.1efd3",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "5",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "x": 2020,
+        "y": 360,
+        "wires": [
+            [
+                "7ddc9a31.03af24"
+            ]
+        ]
+    },
+    {
+        "id": "fd0e6e48.e1f438",
+        "type": "debug",
+        "z": "b82038ad.1efd3",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 630,
+        "y": 540,
+        "wires": []
+    },
+    {
+        "id": "da83e3ad.75865",
+        "type": "image viewer",
+        "z": "b82038ad.1efd3",
+        "name": "",
+        "width": 160,
+        "data": "payload",
+        "dataType": "msg",
+        "x": 2390,
+        "y": 360,
+        "wires": [
+            [
+                "71f8a616.6965c8"
+            ]
+        ]
+    },
+    {
+        "id": "f91532ee.fc7958",
+        "type": "comment",
+        "z": "b82038ad.1efd3",
+        "name": "TEST",
+        "info": "",
+        "x": 300,
+        "y": 620,
+        "wires": []
+    },
+    {
+        "id": "41c90ea1.fe547",
+        "type": "comment",
+        "z": "b82038ad.1efd3",
+        "name": "MQTT Broker",
+        "info": "",
+        "x": 290,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "5a52580a.208cb",
+        "type": "comment",
+        "z": "b82038ad.1efd3",
+        "name": "MQTT Subsliriber",
+        "info": "",
+        "x": 300,
+        "y": 420,
+        "wires": []
+    }
+]
